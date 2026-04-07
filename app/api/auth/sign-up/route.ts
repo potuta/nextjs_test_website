@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
   try {
     const body: unknown = await req.json();
 
-    // Validate fields exist
     if (
       typeof body !== "object" ||
       body === null ||
@@ -28,7 +27,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // 🔍 Check if username or email already exists
     const existingUser = await db.users.findFirst({
       where: {
         OR: [
@@ -53,10 +51,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 🔐 Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Save new user
     const user = await db.users.create({
       data: {
         name,

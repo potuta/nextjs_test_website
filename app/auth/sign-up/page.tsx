@@ -40,9 +40,6 @@ export default function SignUpPage(){
                 notification({ type: "success", message: "Registered successfully!" });
                 form.reset(); // optional: clear the form after signup
             } else if (res.status === 409) {
-                // Unique username or email conflict
-                // alert("This username or email is already taken. Please choose another.");
-                // notification({type: "error", message: "This username is already taken. Please choose another."});
                 notification({
                     type: "error",
                     message: data.error || "Username or email is already taken",
@@ -54,7 +51,6 @@ export default function SignUpPage(){
             }
         } catch (err) {
             console.error(err);
-            // alert("Failed to reach server");
             notification({type: "error", message: "Failed to reach server"});
         }
     }
