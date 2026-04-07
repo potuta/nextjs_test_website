@@ -1,0 +1,94 @@
+"use client"
+
+import { SignInFormSchema, SignupFormSchema } from "@/app/schemas/validate";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { notification } from "@/lib/notification";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import z from "zod";
+
+interface SignInPageProps {
+    onClose: () => void;
+}
+
+export function SignInPage({ onClose }: SignInPageProps){
+    const form = useForm({
+        resolver: zodResolver(SignInFormSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        }
+    })
+
+    async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
+        const { data, error } = await authClient.signIn.email({
+            email: values.email, // user email address
+            password: values.password, // user password -> min 8 characters by default
+            // callbackURL: "/" 
+        }, {
+            onRequest: (ctx) => {
+                //show loading
+            },
+            onSuccess: (ctx) => {
+                //redirect to the dashboard or sign in page
+                notification({ type: "success", message: "Signed in successfully!" });
+                onClose();
+            },
+            onError: (ctx) => {
+                // display the error message
+                // alert(ctx.error.message);
+                notification({type: "error", message: `Error: ${ctx.error.message}`});
+            },
+        });
+    }
+
+    return (
+        <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Login</DialogTitle>
+                    <DialogDescription>
+                        Enter your credentials
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={form.handleSubmit(onSignIn)}>
+                    <FieldGroup className="gap-y-4">
+
+                        <Controller 
+                            name="email" 
+                            control={form.control} 
+                            render={({field, fieldState}) => (
+                                <Field>
+                                    <FieldLabel>Email</FieldLabel>
+                                    <Input aria-invalid={fieldState.invalid} placeholder="john@doe.com" {...field} />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                        )}/>
+
+                        <Controller 
+                            name="password" 
+                            control={form.control} 
+                            render={({field, fieldState}) => (
+                                <Field>
+                                    <FieldLabel>Password</FieldLabel>
+                                    <Input aria-invalid={fieldState.invalid} placeholder="********" type="password" {...field} />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </Field>
+                        )}/>
+
+                        <Button>Login</Button>
+
+                    </FieldGroup>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
