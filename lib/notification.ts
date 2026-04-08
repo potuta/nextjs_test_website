@@ -1,4 +1,5 @@
-// lib/notify.ts
+"use client"
+
 import { toast } from "sonner"
 
 interface NotificationProps {

@@ -1,4 +1,5 @@
 import { SignInFormSchema, SignupFormSchema } from "@/app/schemas/validate";
+import { redirectWithToast } from "@/lib/redirect-with-toast";
 import { authClient } from "@/lib/auth-client";
 import { notification } from "@/lib/notification";
 import { redirect } from "next/navigation";
@@ -14,8 +15,9 @@ export async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
             //show loading
         },
         onSuccess: (ctx) => {
-            redirect("/dashboard");
-            notification({ type: "success", message: "Signed in successfully!" });
+            // notification({ type: "success", message: "Signed in successfully!" });
+            // redirect("/dashboard");
+            redirectWithToast("/dashboard", "success", "Signed in successfully!");
         },
         onError: (ctx) => {
             notification({type: "error", message: `Error: ${ctx.error.message}`});
@@ -36,8 +38,9 @@ export async function onSignup(values: z.infer<typeof SignupFormSchema>) {
             },
             onSuccess: (ctx) => {
                 //redirect to the dashboard or sign in page
-                redirect("/");
-                notification({ type: "success", message: "Registered successfully!" });
+                // notification({ type: "success", message: "Registered successfully!" });
+                // redirect("/");
+                redirectWithToast("/", "success", "Registered successfully!");
             },
             onError: (ctx) => {
                 // display the error message
