@@ -1,6 +1,6 @@
 "use client"
 
-import { SignInFormSchema, SignupFormSchema } from "@/app/schemas/validate";
+import { SignInFormSchema } from "@/app/schemas/validate";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { notification } from "@/lib/notification";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { redirect } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -34,13 +35,11 @@ export function SignInPage({ onClose }: SignInPageProps){
                 //show loading
             },
             onSuccess: (ctx) => {
-                //redirect to the dashboard or sign in page
                 notification({ type: "success", message: "Signed in successfully!" });
                 onClose();
+                redirect("/dashboard");
             },
             onError: (ctx) => {
-                // display the error message
-                // alert(ctx.error.message);
                 notification({type: "error", message: `Error: ${ctx.error.message}`});
             },
         });
