@@ -14,8 +14,8 @@ export async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
             //show loading
         },
         onSuccess: (ctx) => {
-            notification({ type: "success", message: "Signed in successfully!" });
             redirect("/dashboard");
+            notification({ type: "success", message: "Signed in successfully!" });
         },
         onError: (ctx) => {
             notification({type: "error", message: `Error: ${ctx.error.message}`});
@@ -36,6 +36,7 @@ export async function onSignup(values: z.infer<typeof SignupFormSchema>) {
             },
             onSuccess: (ctx) => {
                 //redirect to the dashboard or sign in page
+                redirect("/");
                 notification({ type: "success", message: "Registered successfully!" });
             },
             onError: (ctx) => {
