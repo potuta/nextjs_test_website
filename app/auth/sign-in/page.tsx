@@ -5,12 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { notification } from "@/lib/notification";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import z from "zod";
+import { onSignIn } from "@/app/auth/actions";
 
 interface SignInPageProps {
     onClose: () => void;
@@ -24,26 +21,6 @@ export function SignInPage({ onClose }: SignInPageProps){
             password: "",
         }
     })
-
-    async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
-        const { data, error } = await authClient.signIn.email({
-            email: values.email, // user email address
-            password: values.password, // user password -> min 8 characters by default
-            // callbackURL: "/" 
-        }, {
-            onRequest: (ctx) => {
-                //show loading
-            },
-            onSuccess: (ctx) => {
-                notification({ type: "success", message: "Signed in successfully!" });
-                onClose();
-                redirect("/dashboard");
-            },
-            onError: (ctx) => {
-                notification({type: "error", message: `Error: ${ctx.error.message}`});
-            },
-        });
-    }
 
     return (
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>

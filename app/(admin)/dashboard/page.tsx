@@ -11,6 +11,6 @@ export default function Dashboard(){
     }
 
     return (
-        <div>Welcome {session?.user.name}!</div>
+        <div>Welcome {session?.user.name} ({session?.user.role})!</div>
     )
 }

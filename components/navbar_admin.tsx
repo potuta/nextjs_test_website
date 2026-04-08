@@ -4,22 +4,19 @@ import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { ThemeToggle } from "./ui/theme-toggle";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+
+async function signOut(){
+    await authClient.signOut({
+        fetchOptions: {
+            onSuccess: () => {
+                redirect("/");
+            }
+        }
+    })
+}
 
 export function NavbarAdmin() {
-
-    const router = useRouter();
-
-    async function signOut(){
-        await authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                    router.push("/");
-                }
-            }
-        })
-    }
-
     return (
         <nav className="w-full py-5 flex items-center justify-between">
             <div className="flex items-center gap-8">

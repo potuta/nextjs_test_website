@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "@/lib/db";
-import { username } from "better-auth/plugins"
+import { admin as adminPlugin, username } from "better-auth/plugins";
+import { ac, admin, user } from "@/lib/permission";
 
 export const auth = betterAuth({
     emailAndPassword: {
@@ -9,7 +10,16 @@ export const auth = betterAuth({
         autoSignIn: false
     },
     plugins: [
-        username()
+        username(),
+        adminPlugin({
+            ac,
+            roles: {
+                admin,
+                user,
+            },
+            defaultRole: "user",
+            adminRoles: ["admin"],
+        }),
     ],
     database: prismaAdapter(db, {
         provider: "postgresql",
