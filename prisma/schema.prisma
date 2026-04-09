@@ -30,6 +30,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   tasks         Task[]
+  roles Role[] @relation("UserRoles")
 
   username        String?
   displayUsername String?
@@ -92,4 +93,17 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Role {
+  id String @id @default(uuid())
+  name String @unique
+  permissions Permission[] @relation("RolesPermissions")
+  users User[] @relation("UserRoles")
+}
+
+model Permission {
+  id String @id @default(uuid())
+  name String @unique
+  roles Role[] @relation("RolesPermissions")
 }

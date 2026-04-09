@@ -3,6 +3,7 @@ import { redirectWithToast } from "@/lib/redirect-with-toast";
 import { auth } from "@/lib/auth"; // server-side Better Auth instance
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { hasPermission } from "@/lib/hasPermission";
 
 export default async function UserLayout({
   children,
@@ -18,17 +19,22 @@ export default async function UserLayout({
     redirect("/"); // redirect to homepage or login
   }
 
-  const permissions = await auth.api.userHasPermission({
-    body: {
-        userId: session.user.id,
-        permissions: {
-            user: ["get"]
-        }
-    }
-  })
+  // const permissions = await auth.api.userHasPermission({
+  //   body: {
+  //       userId: session.user.id,
+  //       permissions: {
+  //           user: ["get"]
+  //       }
+  //   }
+  // })
 
-  if (!permissions.success){
-    redirectWithToast("/dashboard", "error", "No permission to access user");
+  // if (!permissions.success){
+  //   redirectWithToast("/dashboard", "error", "No permission to access user");
+  // }
+
+  const permission = await hasPermission(session.user.id, "view_all");
+  if (!permission || permission === null) {
+    redirectWithToast("/dashboard", "error", "No permission to access users");
   }
 
   return (
