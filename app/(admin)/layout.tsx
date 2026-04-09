@@ -18,7 +18,7 @@ export default async function SharedLayout({children} : {children: ReactNode}){
         <div className="[--header-height:calc(--spacing(9))]">
             <SidebarProvider className="flex flex-col">
                 <NavbarAdmin />
-                <div className="flex -ml-5 h-16 shrink-0 items-center">
+                <div className="flex -ml-5 shrink-0 items-center">
                     <SidebarAdmin />
                     <SidebarInset>
                         {children}

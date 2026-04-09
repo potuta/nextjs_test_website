@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"; // server-side Better Auth instance
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function DashboardLayout({
+export default async function UserLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,18 +22,18 @@ export default async function DashboardLayout({
     body: {
         userId: session.user.id,
         permissions: {
-            dashboard: ["view"]
+            user: ["get"]
         }
     }
   })
 
   if (!permissions.success){
-    redirectWithToast("/", "error", "No permission to access dashboard");
+    redirectWithToast("/dashboard", "error", "No permission to access user");
   }
 
   return (
-    <div className="p-10">
-      {children}
+    <div className="">
+        {children}
     </div>
   );
 }

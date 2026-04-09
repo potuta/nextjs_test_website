@@ -59,7 +59,7 @@ const data = {
         items: [
             {
             title: "User",
-            url: "#",
+            url: "/users",
             icon: User
             },
             {

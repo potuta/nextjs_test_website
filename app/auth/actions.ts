@@ -20,7 +20,8 @@ export async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
             redirectWithToast("/dashboard", "success", "Signed in successfully!");
         },
         onError: (ctx) => {
-            notification({type: "error", message: `Error: ${ctx.error.message}`});
+            // notification({type: "error", message: `Error: ${ctx.error.message}`});
+            redirectWithToast("/", "error", `Error: ${ctx.error.message}`);
         },
     });
 }
@@ -45,7 +46,8 @@ export async function onSignup(values: z.infer<typeof SignupFormSchema>) {
             onError: (ctx) => {
                 // display the error message
                 // alert(ctx.error.message);
-                notification({type: "error", message: `Error: ${ctx.error.message}`});
+                // notification({type: "error", message: `Error: ${ctx.error.message}`});
+                redirectWithToast("/", "error", `Error: ${ctx.error.message}`);
             },
         });
     }
