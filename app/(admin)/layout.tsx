@@ -1,4 +1,5 @@
-import { NavbarAdmin } from "@/components/navbar_admin";
+import { NavbarAdmin, SidebarAdmin } from "@/components/navbar_admin";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -14,9 +15,16 @@ export default async function SharedLayout({children} : {children: ReactNode}){
     }
 
     return (
-        <>
-            <NavbarAdmin />
-            {children}
-        </>
+        <div className="[--header-height:calc(--spacing(9))]">
+            <SidebarProvider className="flex flex-col">
+                <NavbarAdmin />
+                <div className="flex -ml-5 h-16 shrink-0 items-center">
+                    <SidebarAdmin />
+                    <SidebarInset>
+                        {children}
+                    </SidebarInset>
+                </div>
+            </SidebarProvider>
+        </div>
     )
 }

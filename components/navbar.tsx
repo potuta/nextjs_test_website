@@ -22,7 +22,7 @@ export function Navbar() {
             <div className="flex items-center gap-8">
                 <Link href="/">
                     <h1 className="text-3xl font-bold">
-                        <span className="text-blue-500">Home</span>
+                        Task<span className="text-blue-500">Manager</span>
                     </h1>
                 </Link>
 

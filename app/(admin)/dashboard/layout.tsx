@@ -1,15 +1,14 @@
 // app/(admin)/dashboard/layout.tsx
 import { redirectWithToast } from "@/lib/redirect-with-toast";
 import { auth } from "@/lib/auth"; // server-side Better Auth instance
-import { notification } from "@/lib/notification";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -29,8 +28,6 @@ export default async function DashboardLayout({
   })
 
   if (!permissions.success){
-    // notification({type: "error", message: `No permission`});
-    // redirect("/");
     redirectWithToast("/", "error", "No permission to access dashboard");
   }
 
