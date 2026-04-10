@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 📚 What I Learned – Next.js (App Router)
 
-## Getting Started
+This week, I explored the modern Next.js ecosystem and built a full-stack application using the App Router. Coming from a .NET Core MVC background, I focused on understanding how similar architectural concepts translate into the React/Next.js environment.
 
-First, run the development server:
+### ⚙️ Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+* **TypeScript** – Strongly typed development across frontend and backend
+* **Tailwind CSS** – Utility-first styling for rapid UI development
+* **PostgreSQL** – Relational database for persistent storage
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🗄️ Database & ORM
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Prisma ORM**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  * Schema modeling and migrations
+  * Querying relational data
+  * Integrating with Next.js server components and route handlers
 
-## Learn More
+### 🎨 UI & Components
 
-To learn more about Next.js, take a look at the following resources:
+* **shadcn/ui**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  * Leveraged pre-built, accessible UI components
+  * Customized layouts including sidebar templates
+* **lucide-react**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  * Integrated consistent and scalable iconography
 
-## Deploy on Vercel
+### 🔐 Authentication & Authorization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **better-auth**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  * Implemented sign-up and sign-in flows
+  * Managed sessions via database and browser storage
+* **Custom RBAC & PBAC**
+
+  * Designed and implemented dynamic role-based and permission-based access control
+  * Overcame limitations of static role definitions
+
+### 🧾 Forms & Validation
+
+* **React Hook Form**
+
+  * Efficient form state management
+* **Zod**
+
+  * Schema-based validation for type-safe input handling
+
+### 🚦 Next.js Core Concepts
+
+* App Router and file-based routing
+* Server and Client Components
+* Route Handlers for backend logic
+* Data fetching strategies and rendering patterns
+
+### 💻 Developer Tooling
+
+* CLI workflows (`npm run dev`, Prisma commands, etc.)
+* Environment configuration and project setup
+
+---
+
+### 🧠 Key Takeaway
+
+Transitioning from .NET Core MVC to Next.js highlighted strong parallels in full-stack architecture, while introducing modern patterns such as server components, hybrid rendering, and a more integrated frontend-backend development experience.
