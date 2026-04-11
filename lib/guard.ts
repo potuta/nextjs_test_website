@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { hasPermission } from "./hasPermission";
 import { getUserFromSession } from "./getUserFromSession";
 
-export async function guard(req: Request, permission: string): Promise<NextResponse | null> {
+export async function guard(permission: string): Promise<NextResponse | null> {
   try {
     const user = await getUserFromSession();
     if (!user) return NextResponse.json({ message: "Forbidden" }, { status: 403 });

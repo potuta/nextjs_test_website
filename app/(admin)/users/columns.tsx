@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import z from "zod";
 
@@ -27,6 +28,7 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>
 export type TableUser = {
+  id: string
   name: string
   username: string | null
   email: string
@@ -34,7 +36,28 @@ export type TableUser = {
   // no password fetched from DB
 }
 
-export const columns: ColumnDef<TableUser>[] = [
+export const columns = ({
+  setSelectedUser,
+  setOpen,
+}: {
+  setSelectedUser: (user: TableUser) => void
+  setOpen: (open: boolean) => void
+}): ColumnDef<TableUser>[] => [
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <Button
+        onClick={() => {
+          setSelectedUser(row.original)
+          setOpen(true)
+        }}
+      >
+        Edit
+      </Button>
+    ),
+  },
+
   {
     accessorKey: "name",
     header: "Name",
@@ -49,14 +72,13 @@ export const columns: ColumnDef<TableUser>[] = [
   },
   {
     accessorKey: "role",
-    header: "Role"
+    header: "Role",
   },
   {
     id: "password",
     header: () => <div className="text-right">Password</div>,
-    cell: ({ row }) => {
-        // Just show masked value
-        return <div className="text-right font-medium">••••••</div>
-    },
-  }
+    cell: () => (
+      <div className="text-right font-medium">••••••</div>
+    ),
+  },
 ]
