@@ -28,7 +28,7 @@ export function Navbar() {
 
                 <div className="flex items-center gap-2">
                     <Link className={buttonVariants({variant: "ghost"})} href="/about">About</Link>
-                    <Link className={buttonVariants({variant: "ghost"})} href="/create">Create</Link>
+                    <Link className={buttonVariants({variant: "ghost"})} href="/taskManager">Create</Link>
                     <ThemeToggle />
                 </div>
             </div>

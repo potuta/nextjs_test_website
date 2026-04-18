@@ -1,18 +1,23 @@
 import React from "react";
-
-type User = {
-  permissions: string[];
-};
+import { User } from "../types/userSession";
 
 type CanProps = {
-  permission: string;
-  user?: User | null; // optional in case user is not loaded yet
+  user: User | null;
+  role?: string;
+  permission?: string;
   children: React.ReactNode;
 };
 
-export function Can({ permission, user, children }: CanProps) {
+export function Can({ user, role, permission, children }: Readonly<CanProps>) {
   if (!user) return null;
 
-  const hasAccess = user.permissions.includes(permission);
-  return hasAccess ? <>{children}</> : null;
+  if (role && user.role !== role) {
+    return null;
+  }
+
+  if (permission && !user.permissions?.includes(permission)) {
+    return null;
+  }
+
+  return <>{children}</>;
 }

@@ -3,22 +3,11 @@
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { ThemeToggle } from "./ui/theme-toggle";
-import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "./ui/sidebar";
 import { SidebarAdminMain } from "./sidebar_admin_main";
 import { LayoutDashboard, User, UserKey, UsersRound } from "lucide-react";
-
-async function signOut(){
-    await authClient.signOut({
-        fetchOptions: {
-            onSuccess: () => {
-                redirect("/");
-            }
-        }
-    })
-}
+import { signOut } from "@/app/auth/actions";
 
 export function NavbarAdmin() {
     return (
@@ -40,7 +29,7 @@ export function NavbarAdmin() {
 
             <div className="flex items-center gap-2">
                 <Button variant="outline" asChild>
-                    <Link href="/user">Switch to User</Link>
+                    <Link href="/taskManager">Switch to User</Link>
                 </Button>
                 <Button className={buttonVariants({variant: "destructive"})} onClick={signOut}>Logout</Button>
             </div>

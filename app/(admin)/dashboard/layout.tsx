@@ -32,7 +32,7 @@ export default async function DashboardLayout({
   //   redirectWithToast("/", "error", "No permission to access dashboard");
   // }
 
-  const permission = await hasPermission(session.user.id, "view_all");
+  const permission = await hasPermission(session.user.id, "view_dashboard");
   if (!permission || permission === null) {
     redirectWithToast("/", "error", "No permission to access dashboard");
   }
