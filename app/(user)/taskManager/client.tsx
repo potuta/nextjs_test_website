@@ -29,30 +29,79 @@ type Group = {
   tasks: Task[]
 }
 
-export function TodoClient({ groups, user }: Readonly<{ groups: Group[], user: { id: string; username?: string }}>) {
-  const [open, setOpen] = useState<{ [key: number]: boolean }>({})
+export function TodoClient({
+  groups,
+  user
+}: {
+  groups: Group[]
+  user: { id: string; username?: string }
+}) {
+  const [open, setOpen] = useState<Record<number, boolean>>({})
   const [groupInput, setGroupInput] = useState("")
-  const [taskInput, setTaskInput] = useState<{ [key: number]: string }>({})
-  const isIndeterminate = (tasks: Task[]) =>
-    tasks.some(t => t.isDone) && !tasks.every(t => t.isDone)
+  const [taskInput, setTaskInput] = useState<Record<number, string>>({})
 
-  const toggleGroup = (id: number) => {
-    setOpen(prev => ({ ...prev, [id]: !prev[id] }))
-  }
-
-  const getProgress = (tasks: Task[]) => {
-    if (!tasks.length) return 0
-    return Math.round(
-      (tasks.filter(t => t.isDone).length / tasks.length) * 100
-    )
-  }
+  // ---------------------------
+  // Helpers
+  // ---------------------------
 
   const isAllChecked = (tasks: Task[]) =>
     tasks.length > 0 && tasks.every(t => t.isDone)
 
+  const getProgress = (tasks: Task[]) => {
+    if (tasks.length === 0) return 0
+    const done = tasks.filter(t => t.isDone).length
+    return Math.round((done / tasks.length) * 100)
+  }
+
+  // ---------------------------
+  // Handlers
+  // ---------------------------
+
+  const handleToggleGroup = (id: number) => {
+    setOpen(prev => ({ ...prev, [id]: !prev[id] }))
+  }
+
+  const handleCreateGroup = async () => {
+    if (!groupInput.trim()) return
+    await createGroup(groupInput, user.id)
+    setGroupInput("")
+  }
+
+  const handleCreateTask = async (groupId: number) => {
+    const text = taskInput[groupId]
+    if (!text?.trim()) return
+
+    await createTask(text, groupId, user.id)
+
+    setTaskInput(prev => ({
+      ...prev,
+      [groupId]: ""
+    }))
+  }
+
+  const handleToggleTask = async (taskId: number, value: boolean) => {
+    await toggleTask(taskId, value, user.id)
+  }
+
+  const handleToggleAll = async (group: Group, value: boolean) => {
+    await toggleAllTasks(group.id, value, user.id)
+  }
+
+  const handleDeleteTask = async (taskId: number) => {
+    await deleteTask(taskId, user.id)
+  }
+
+  const handleDeleteGroup = async (groupId: number) => {
+    await deleteGroup(groupId, user.id)
+  }
+
+  // ---------------------------
+  // UI
+  // ---------------------------
+
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full max-w-lg space-y-4">
 
         <Card>
           <CardContent className="p-4 space-y-4">
@@ -61,45 +110,38 @@ export function TodoClient({ groups, user }: Readonly<{ groups: Group[], user: {
               {user.username} Tasks
             </h1>
 
-            {/* CREATE GROUP */}
+            {/* Create Group */}
             <div className="flex gap-2">
               <Input
                 placeholder="Add a group..."
                 value={groupInput}
                 onChange={(e) => setGroupInput(e.target.value)}
               />
-              <Button
-                size="icon"
-                onClick={async () => {
-                  if (!groupInput.trim()) return
-                  await createGroup(groupInput, user.id)
-                  setGroupInput("")
-                }}
-              >
+              <Button size="icon" onClick={handleCreateGroup}>
                 <Plus size={16} />
               </Button>
             </div>
 
-            {/* GROUPS */}
-            {groups.map((group) => (
+            {/* Groups */}
+            {groups.map(group => (
               <div key={group.id} className="border rounded-lg p-2">
 
-                {/* HEADER */}
+                {/* Header */}
                 <div className="flex justify-between items-center">
-
                   <div className="flex items-center gap-2">
-                   <Checkbox
+
+                    <Checkbox
                       checked={isAllChecked(group.tasks)}
                       onCheckedChange={(val) => {
                         if (typeof val === "boolean") {
-                          toggleAllTasks(group.id, val, user.id)
+                          handleToggleAll(group, val)
                         }
                       }}
                     />
 
                     <div
                       className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => toggleGroup(group.id)}
+                      onClick={() => handleToggleGroup(group.id)}
                     >
                       {open[group.id]
                         ? <ChevronDown size={16} />
@@ -114,52 +156,41 @@ export function TodoClient({ groups, user }: Readonly<{ groups: Group[], user: {
                     <Button
                       size="icon"
                       variant="destructive"
-                      onClick={() => deleteGroup(group.id, user.id)}
+                      onClick={() => handleDeleteGroup(group.id)}
                     >
                       <Trash size={16} />
                     </Button>
                   </div>
                 </div>
 
-                <Progress value={getProgress(group.tasks)} />
+                <Progress value={getProgress(group.tasks)} className="h-1.5 mt-2 mb-2"/>
 
-                {/* TASKS */}
+                {/* Tasks */}
                 {open[group.id] && (
                   <div className="mt-3 space-y-2">
 
-                    {/* ADD TASK */}
+                    {/* Add Task */}
                     <div className="flex gap-2">
                       <Input
                         placeholder="Add task..."
                         value={taskInput[group.id] || ""}
                         onChange={(e) =>
-                          setTaskInput({
-                            ...taskInput,
+                          setTaskInput(prev => ({
+                            ...prev,
                             [group.id]: e.target.value
-                          })
+                          }))
                         }
                       />
-
                       <Button
                         size="icon"
-                        onClick={async () => {
-                          const text = taskInput[group.id]
-                          if (!text?.trim()) return
-
-                          await createTask(text, group.id, user.id)
-
-                          setTaskInput({
-                            ...taskInput,
-                            [group.id]: ""
-                          })
-                        }}
+                        onClick={() => handleCreateTask(group.id)}
                       >
                         <Plus size={16} />
                       </Button>
                     </div>
 
-                    {/* TASKS */}
-                    {(group.tasks ?? []).map((task) => (
+                    {/* Task List */}
+                    {group.tasks.map(task => (
                       <div key={task.id} className="flex justify-between">
 
                         <div className="flex items-center gap-2">
@@ -167,7 +198,7 @@ export function TodoClient({ groups, user }: Readonly<{ groups: Group[], user: {
                             checked={task.isDone}
                             onCheckedChange={(val) => {
                               if (typeof val === "boolean") {
-                                toggleTask(task.id, val, user.id)
+                                handleToggleTask(task.id, val)
                               }
                             }}
                           />
@@ -180,7 +211,7 @@ export function TodoClient({ groups, user }: Readonly<{ groups: Group[], user: {
                         <Button
                           size="icon"
                           variant="destructive"
-                          onClick={() => deleteTask(task.id, user.id)}
+                          onClick={() => handleDeleteTask(task.id)}
                         >
                           <Trash size={16} />
                         </Button>
