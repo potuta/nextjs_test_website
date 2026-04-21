@@ -1,7 +1,6 @@
 import { NavbarUser } from "@/components/navbar_user";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 import type { User } from '@/components/types/userSession';
 import { getUserPermissions } from "@/lib/actions";
@@ -17,7 +16,7 @@ export default async function SharedLayout({children} : Readonly<{children: Reac
     }
 
     const user: User = {
-        id: session?.user.id,
+        id: session!.user.id,
         role: session?.user.role ?? undefined,
         permissions: await getUserPermissions(session!.user.id)
     }

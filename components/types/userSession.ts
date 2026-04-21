@@ -1,5 +1,5 @@
 export type User = {
-  id?: string;
+  id: string;
   role?: string;
   permissions?: string[];
   name?: string;
