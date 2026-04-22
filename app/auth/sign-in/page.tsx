@@ -13,7 +13,7 @@ interface SignInPageProps {
     onClose: () => void;
 }
 
-export function SignInPage({ onClose }: SignInPageProps){
+export default function SignInPage({ onClose }: SignInPageProps){
     const form = useForm({
         resolver: zodResolver(SignInFormSchema),
         defaultValues: {

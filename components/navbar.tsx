@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import { ThemeToggle } from "./ui/theme-toggle";
-import { SignInPage } from "@/app/auth/sign-in/page";
+import SignInPage from "@/app/auth/sign-in/page";
 import { useState } from "react";
 
 export function Navbar() {
