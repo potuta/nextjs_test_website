@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "sonner";
 import { GlobalNotification } from "@/components/ui/globalnotification";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
         >
           <main className="mx-auto w-full px-4 md:px-6 lg:px-8">
             {children}
+            <Analytics />
             <Toaster position="bottom-left" richColors theme="system"/>
             <Suspense fallback={null}>
               <GlobalNotification />
