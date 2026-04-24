@@ -60,7 +60,16 @@ export default function SignInPage({ onClose }: SignInPageProps){
                                 </Field>
                         )}/>
 
-                        <Button>Login</Button>
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? (
+                                <span className="flex items-center gap-2">
+                                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    Logging in...
+                                </span>
+                            ) : (
+                                "Login"
+                            )}
+                        </Button>
 
                     </FieldGroup>
                 </form>

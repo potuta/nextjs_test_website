@@ -39,6 +39,12 @@ export function TodoClient({
   const [open, setOpen] = useState<Record<number, boolean>>({})
   const [groupInput, setGroupInput] = useState("")
   const [taskInput, setTaskInput] = useState<Record<number, string>>({})
+  const [isCreating, setIsCreating] = useState(false);
+  const [isCreatingTask, setIsCreatingTask] = useState<number | null>(null);
+  const [loadingGroupId, setLoadingGroupId] = useState<number | null>(null);
+  const [loadingTaskId, setLoadingTaskId] = useState<number | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<number | null>(null);
+  const [isDeletingTaskId, setIsDeletingTaskId] = useState<number | null>(null);
 
   // ---------------------------
   // Helpers
@@ -63,36 +69,72 @@ export function TodoClient({
 
   const handleCreateGroup = async () => {
     if (!groupInput.trim()) return
-    await createGroup(groupInput, user.id)
-    setGroupInput("")
+
+    try{
+      setIsCreating(true);
+      await createGroup(groupInput, user.id)
+      setGroupInput("")
+    }
+    finally{
+      setIsCreating(false);
+    }
   }
 
   const handleCreateTask = async (groupId: number) => {
     const text = taskInput[groupId]
     if (!text?.trim()) return
 
-    await createTask(text, groupId, user.id)
-
-    setTaskInput(prev => ({
-      ...prev,
-      [groupId]: ""
-    }))
+    try{
+      setIsCreatingTask(groupId);
+      await createTask(text, groupId, user.id)
+      setTaskInput(prev => ({
+        ...prev,
+        [groupId]: ""
+      }))
+    }
+    finally{
+      setIsCreatingTask(null);
+    }
   }
 
   const handleToggleTask = async (taskId: number, value: boolean) => {
-    await toggleTask(taskId, value, user.id)
+    try{
+      setLoadingTaskId(taskId);
+      await toggleTask(taskId, value, user.id)
+    }
+    finally{
+      setLoadingTaskId(null);
+    }
   }
 
   const handleToggleAll = async (group: Group, value: boolean) => {
-    await toggleAllTasks(group.id, value, user.id)
+    try{
+      setLoadingGroupId(group.id);
+      await toggleAllTasks(group.id, value, user.id)
+    }
+    finally{
+      setLoadingGroupId(null);
+    }
   }
 
   const handleDeleteTask = async (taskId: number) => {
-    await deleteTask(taskId, user.id)
+    try{
+      setIsDeletingTaskId(taskId);
+      await deleteTask(taskId, user.id)
+    }
+    finally{
+      setIsDeletingTaskId(null);
+    }
   }
 
   const handleDeleteGroup = async (groupId: number) => {
-    await deleteGroup(groupId, user.id)
+    try{
+      setIsDeletingId(groupId);
+      await deleteGroup(groupId, user.id)
+    }
+    finally{
+      setIsDeletingId(null);
+    }
   }
 
   // ---------------------------
@@ -116,9 +158,14 @@ export function TodoClient({
                 placeholder="Add a group..."
                 value={groupInput}
                 onChange={(e) => setGroupInput(e.target.value)}
+                disabled={isCreating}
               />
-              <Button size="icon" onClick={handleCreateGroup}>
-                <Plus size={16} />
+              <Button size="icon" onClick={handleCreateGroup} disabled={isCreating}>
+                {isCreating ? (
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Plus size={16} />
+                )}
               </Button>
             </div>
 
@@ -130,14 +177,27 @@ export function TodoClient({
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
 
-                    <Checkbox
+                    {/* <Checkbox
                       checked={isAllChecked(group.tasks)}
                       onCheckedChange={(val) => {
                         if (typeof val === "boolean") {
                           handleToggleAll(group, val)
                         }
                       }}
-                    />
+                    /> */}
+
+                    {loadingGroupId === group.id ? (
+                      <div className="h-4 w-4 border-2 border-muted border-t-primary rounded-full animate-spin" />
+                    ) : (
+                      <Checkbox
+                        checked={isAllChecked(group.tasks)}
+                        onCheckedChange={(val) => {
+                          if (typeof val === "boolean") {
+                            handleToggleAll(group, val);
+                          }
+                        }}
+                      />
+                    )}
 
                     <div
                       className="flex items-center gap-2 cursor-pointer"
@@ -153,13 +213,19 @@ export function TodoClient({
 
                   <div className="flex items-center gap-2">
                     <span>{getProgress(group.tasks)}%</span>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => handleDeleteGroup(group.id)}
-                    >
-                      <Trash size={16} />
-                    </Button>
+
+                    {isDeletingId === group.id ? (
+                      <div className="h-4 w-4 border-2 border-muted border-t-destructive rounded-full animate-spin" />
+                    ): (
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => handleDeleteGroup(group.id)}
+                        disabled={isDeletingId === group.id}
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -180,12 +246,18 @@ export function TodoClient({
                             [group.id]: e.target.value
                           }))
                         }
+                        disabled={isCreatingTask === group.id}
                       />
                       <Button
                         size="icon"
                         onClick={() => handleCreateTask(group.id)}
+                        disabled={isCreatingTask === group.id}
                       >
-                        <Plus size={16} />
+                        {isCreatingTask === group.id ? (
+                          <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Plus size={16} />
+                        )}
                       </Button>
                     </div>
 
@@ -194,27 +266,46 @@ export function TodoClient({
                       <div key={task.id} className="flex justify-between">
 
                         <div className="flex items-center gap-2">
-                          <Checkbox
+                          {/* <Checkbox
                             checked={task.isDone}
                             onCheckedChange={(val) => {
                               if (typeof val === "boolean") {
                                 handleToggleTask(task.id, val)
                               }
                             }}
-                          />
+                          /> */}
+
+                          {loadingTaskId === task.id ? (
+                            <div className="h-4 w-4 border-2 border-muted border-t-primary rounded-full animate-spin" />
+                          ) : (
+                            <Checkbox
+                              checked={task.isDone}
+                              onCheckedChange={(val) => {
+                                if (typeof val === "boolean") {
+                                  handleToggleTask(task.id, val)
+                                }
+                              }}
+                            />
+                          )}
 
                           <span className={task.isDone ? "line-through text-gray-500" : ""}>
                             {task.task}
                           </span>
                         </div>
 
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => handleDeleteTask(task.id)}
-                        >
-                          <Trash size={16} />
-                        </Button>
+
+                        {isDeletingTaskId === task.id ? (
+                          <div className="h-4 w-4 border-2 border-muted border-t-destructive rounded-full animate-spin" />
+                        ) : (
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => handleDeleteTask(task.id)}
+                            disabled={isDeletingTaskId === task.id}
+                          >
+                            <Trash size={16} />
+                          </Button>
+                        )}
                       </div>
                     ))}
 

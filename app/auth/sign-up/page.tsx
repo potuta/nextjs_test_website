@@ -81,7 +81,16 @@ export default function SignUpPage(){
                                 </Field>
                         )}/>
 
-                        <Button>Sign up</Button>
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? (
+                                <span className="flex items-center gap-2">
+                                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    Signing up...
+                                </span>
+                            ) : (
+                                "Sign up"
+                            )}
+                        </Button>
 
                     </FieldGroup>
                 </form>
