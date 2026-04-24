@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { onSignIn } from "@/app/auth/actions";
+import { useRouter } from "next/navigation";
+import { notification } from "@/lib/notification";
 
 interface SignInPageProps {
     onClose: () => void;
@@ -22,6 +24,8 @@ export default function SignInPage({ onClose }: SignInPageProps){
         }
     })
 
+    const router = useRouter();
+
     return (
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
@@ -31,7 +35,21 @@ export default function SignInPage({ onClose }: SignInPageProps){
                         Enter your credentials
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={form.handleSubmit(onSignIn)}>
+                <form onSubmit={form.handleSubmit(async (values) => {
+                    const res = await onSignIn(values);
+
+                    if (!res.success) {
+                        // show error toast here
+                        return;
+                    }
+
+                    const url =
+                    res.role === "admin" ? "/dashboard" : "/taskManager";
+
+                    notification({ type: 'success', message: 'Signed in successfully!'});
+                    router.push(url);
+                    router.refresh();
+                })}>
                     <FieldGroup className="gap-y-4">
 
                         <Controller 

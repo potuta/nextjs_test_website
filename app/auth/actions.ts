@@ -6,29 +6,18 @@ import z from "zod";
 
 export async function onSignIn(values: z.infer<typeof SignInFormSchema>) {
     const { data, error } = await authClient.signIn.email({
-        email: values.email, // user email address
-        password: values.password, // user password -> min 8 characters by default
-        // callbackURL: "/" 
-    }, {
-        onRequest: (ctx) => {
-            //show loading
-        },
-        onSuccess: (ctx) => {
-            let url = "";
-    
-            if (ctx.data?.user.role === 'admin'){
-                url = "/dashboard"
-            }
-            else{
-                url = "/taskManager"
-            }
+    email: values.email,
+    password: values.password,
+  });
 
-            redirectWithToast(url, "success", "Signed in successfully!");
-        },
-        onError: (ctx) => {
-            redirectWithToast("/", "error", `Error: ${ctx.error.message}`);
-        },
-    });
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  return {
+    success: true,
+    role: data?.user.role,
+  };
 }
 
 export async function onSignup(values: z.infer<typeof SignupFormSchema>) {
