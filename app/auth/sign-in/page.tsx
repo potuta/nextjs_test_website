@@ -46,9 +46,9 @@ export default function SignInPage({ onClose }: SignInPageProps){
                     const url =
                     res.role === "admin" ? "/dashboard" : "/taskManager";
 
-                    notification({ type: 'success', message: 'Signed in successfully!'});
                     router.push(url);
                     router.refresh();
+                    notification({ type: 'success', message: 'Signed in successfully!'});
                 })}>
                     <FieldGroup className="gap-y-4">
 
