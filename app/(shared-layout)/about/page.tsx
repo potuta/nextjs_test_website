@@ -98,7 +98,7 @@ export default function AboutSection() {
               <p className="text-muted-foreground flex items-center gap-2">
                 <Code className="w-4 h=4" />
                 <a
-                  href="https://github.com/potuta/nextjs_test_website"
+                  href="https://github.com/potuta/task_manager"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="ml-1 text-md font-semibold hover:underline"
